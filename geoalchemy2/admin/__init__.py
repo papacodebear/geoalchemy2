@@ -6,22 +6,13 @@ from sqlalchemy import event
 from sqlalchemy.sql import func
 
 from geoalchemy2.admin import dialects
+from geoalchemy2.admin.dialects import select_dialect
 from geoalchemy2.admin.dialects.common import _check_spatial_type
 from geoalchemy2.admin.dialects.common import _spatial_idx_name
 from geoalchemy2.exc import ArgumentError
 from geoalchemy2.types import Geography
 from geoalchemy2.types import Geometry
 from geoalchemy2.types import Raster
-
-
-def select_dialect(dialect_name):
-    """Select the dialect from its name."""
-    known_dialects = {
-        "mysql": dialects.mysql,
-        "postgresql": dialects.postgresql,
-        "sqlite": dialects.sqlite,
-    }
-    return known_dialects.get(dialect_name, dialects.common)
 
 
 def setup_ddl_event_listeners():
