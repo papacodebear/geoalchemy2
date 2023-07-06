@@ -15,8 +15,10 @@ from geoalchemy2.types.dialects import select_dialect
 from geoalchemy2.types.dummy_geometry import _DummyGeometry
 from geoalchemy2.types.geography import Geography
 from geoalchemy2.types.geometry import Geometry
+from geoalchemy2.types.geometry_dump import GeometryDump
 from geoalchemy2.types.gis_type import _GISType
 from geoalchemy2.types.raster import Raster
+from geoalchemy2.types.summary_stats import SummaryStats
 
 
 @compiles(_GISType, "mysql")

@@ -2,6 +2,7 @@
 alembic<1.11
 flake8
 mysql
+pre-commit
 pytest
 pytest-cov
 pytest-html

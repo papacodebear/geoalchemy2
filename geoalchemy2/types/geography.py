@@ -1,5 +1,5 @@
 from geoalchemy2.elements import WKBElement
-from geoalchemy2.types import _GISType
+from geoalchemy2.types.gis_type import _GISType
 
 
 class Geography(_GISType):

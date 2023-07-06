@@ -76,6 +76,9 @@ from sqlalchemy.sql.elements import ColumnElement
 
 from geoalchemy2 import elements
 from geoalchemy2._functions import _FUNCTIONS
+from geoalchemy2.functions._geography import _FUNCTIONS as _GEOGRAPHY_FUNCTIONS  # noqa: F401
+from geoalchemy2.functions._geometry import _FUNCTIONS as _GEOMETRY_FUNCTIONS  # noqa: F401
+from geoalchemy2.functions._raster import _FUNCTIONS as _RASTER_FUNCTIONS  # noqa: F401
 
 try:
     # SQLAlchemy < 2
