@@ -21,7 +21,10 @@ _FUNCTIONS = [
     (
         "Box3D",
         None,
-        "[geometry] Returns a BOX3D representing the 3D extent of the geometry.\nOR\n[raster] Returns the box 3d representation of the enclosing box of the raster.",
+        (
+            "[geometry] Returns a BOX3D representing the 3D extent of the geometry.\nOR\n[raster] Returns the box 3d representation of the enclosing box of the raster.",
+            "Box3D_type",
+        ),
     ),
     (
         "CheckAuth",
@@ -239,11 +242,6 @@ _FUNCTIONS = [
         "Perform 3D union",
     ),
     (
-        "ST_AddBand",
-        types.Geometry,
-        "Returns a raster with the new band(s) of given type added with given initial value in the given index location. If no index is specified, the band is added to the end.",
-    ),
-    (
         "ST_AddMeasure",
         types.Geometry,
         "Return a derived geometry with measure elements linearly interpolated between the start and end points.",
@@ -299,11 +297,6 @@ _FUNCTIONS = [
         "Returns an Encoded Polyline from a LineString geometry.",
     ),
     (
-        "ST_AsGDALRaster",
-        None,
-        "Return the raster tile in the designated GDAL Raster format. Raster formats are one of those supported by your compiled library. Use ST_GDALDrivers() to get a list of formats supported by your library.",
-    ),
-    (
         "ST_AsGML",
         None,
         "Return the geometry as a GML version 2 or 3 element.",
@@ -317,16 +310,6 @@ _FUNCTIONS = [
         "ST_AsHEXEWKB",
         None,
         "Returns a Geometry in HEXEWKB format (as text) using either little-endian (NDR) or big-endian (XDR) encoding.",
-    ),
-    (
-        "ST_AsHexWKB",
-        None,
-        "Return the Well-Known Binary (WKB) in Hex representation of the raster.",
-    ),
-    (
-        "ST_AsJPEG",
-        None,
-        "Return the raster tile selected bands as a single Joint Photographic Exports Group (JPEG) image (byte array). If no band is specified and 1 or more than 3 bands, then only the first band is used. If only 3 bands then all 3 bands are used and mapped to RGB.",
     ),
     (
         "ST_AsKML",
@@ -349,24 +332,14 @@ _FUNCTIONS = [
         "Transform a geometry into the coordinate space of a Mapbox Vector Tile.",
     ),
     (
-        "ST_AsPNG",
-        None,
-        "Return the raster tile selected bands as a single portable network graphics (PNG) image (byte array). If 1, 3, or 4 bands in raster and no bands are specified, then all bands are used. If more 2 or more than 4 bands and no bands specified, then only band 1 is used. Bands are mapped to RGB or RGBA space.",
-    ),
-    (
         "ST_AsRaster",
-        types.Geometry,
-        "Converts a PostGIS geometry to a PostGIS raster.",
+        types.Raster,
+        ("Converts a PostGIS geometry to a PostGIS raster.", "RT_ST_AsRaster"),
     ),
     (
         "ST_AsSVG",
         None,
         "Returns SVG path data for a geometry.",
-    ),
-    (
-        "ST_AsTIFF",
-        None,
-        "Return the raster selected bands as a single TIFF image (byte array). If no band is specified or any of specified bands does not exist in the raster, then will try to use all bands.",
     ),
     (
         "ST_AsTWKB",
@@ -379,64 +352,14 @@ _FUNCTIONS = [
         "Return the Well-Known Text (WKT) representation of the geometry/geography without SRID metadata.",
     ),
     (
-        "ST_AsWKB",
-        None,
-        "Return the Well-Known Binary (WKB) representation of the raster.",
-    ),
-    (
         "ST_AsX3D",
         None,
         "Returns a Geometry in X3D xml node element format: ISO-IEC-19776-1.2-X3DEncodings-XML",
     ),
     (
-        "ST_Aspect",
-        types.Geometry,
-        "Returns the aspect (in degrees by default) of an elevation raster band. Useful for analyzing terrain.",
-    ),
-    (
         "ST_Azimuth",
         None,
         "Returns the north-based azimuth as the angle in radians measured clockwise from the vertical on pointA to pointB.",
-    ),
-    (
-        "ST_Band",
-        types.Geometry,
-        "Returns one or more bands of an existing raster as a new raster. Useful for building new rasters from existing rasters.",
-    ),
-    (
-        "ST_BandFileSize",
-        None,
-        "Returns the file size of a band stored in file system. If no bandnum specified, 1 is assumed.",
-    ),
-    (
-        "ST_BandFileTimestamp",
-        None,
-        "Returns the file timestamp of a band stored in file system. If no bandnum specified, 1 is assumed.",
-    ),
-    (
-        "ST_BandIsNoData",
-        None,
-        "Returns true if the band is filled with only nodata values.",
-    ),
-    (
-        "ST_BandMetaData",
-        None,
-        "Returns basic meta data for a specific raster band. band num 1 is assumed if none-specified.",
-    ),
-    (
-        "ST_BandNoDataValue",
-        None,
-        "Returns the value in a given band that represents no data. If no band num 1 is assumed.",
-    ),
-    (
-        "ST_BandPath",
-        None,
-        "Returns system file path to a band stored in file system. If no bandnum specified, 1 is assumed.",
-    ),
-    (
-        "ST_BandPixelType",
-        None,
-        "Returns the type of pixel for given band. If no bandnum specified, 1 is assumed.",
     ),
     (
         "ST_BdMPolyFromText",
@@ -490,8 +413,11 @@ _FUNCTIONS = [
     ),
     (
         "ST_Clip",
-        types.Geometry,
-        "Returns the raster clipped by the input geometry. If band number not is specified, all bands are processed. If crop is not specified or TRUE, the output raster is cropped.",
+        types.Raster,
+        (
+            "Returns the raster clipped by the input geometry. If band number not is specified, all bands are processed. If crop is not specified or TRUE, the output raster is cropped.",
+            "RT_ST_Clip",
+        ),
     ),
     (
         "ST_ClipByBox2D",
@@ -544,11 +470,6 @@ _FUNCTIONS = [
         'Given a geometry collection, return the "simplest" representation of the contents.',
     ),
     (
-        "ST_ColorMap",
-        types.Geometry,
-        "Creates a new raster of up to four 8BUI bands (grayscale, RGB, RGBA) from the source raster and a specified band. Band 1 is assumed if not specified.",
-    ),
-    (
         "ST_ConcaveHull",
         types.Geometry,
         "The concave hull of a geometry represents a possibly concave geometry that encloses all geometries within the set. You can think of it as shrink wrapping.",
@@ -577,16 +498,6 @@ _FUNCTIONS = [
         "ST_CoordDim",
         None,
         "Return the coordinate dimension of a geometry.",
-    ),
-    (
-        "ST_Count",
-        None,
-        "Returns the number of pixels in a given band of a raster or raster coverage. If no band is specified defaults to band 1. If exclude_nodata_value is set to true, will only count pixels that are not equal to the nodata value.",
-    ),
-    (
-        "ST_CountAgg",
-        None,
-        "Aggregate. Returns the number of pixels in a given band of a set of rasters. If no band is specified defaults to band 1. If exclude_nodata_value is set to true, will only count pixels that are not equal to the NODATA value.",
     ),
     (
         "ST_CoveredBy",
@@ -659,39 +570,24 @@ _FUNCTIONS = [
         "Returns the minimum distance between two lon/lat geometries using a spheroidal earth model.",
     ),
     (
-        "ST_Distinct4ma",
-        None,
-        "Raster processing function that calculates the number of unique pixel values in a neighborhood.",
-    ),
-    (
         "ST_Dump",
-        types.Geometry,
+        types.GeometryDump,
         "Returns a set of geometry_dump rows for the components of a geometry.",
     ),
     (
-        "ST_DumpAsPolygons",
-        None,
-        "Returns a set of geomval (geom,val) rows, from a given raster band. If no band number is specified, band num defaults to 1.",
-    ),
-    (
         "ST_DumpPoints",
-        types.Geometry,
+        types.GeometryDump,
         "Returns a set of geometry_dump rows for the points in a geometry.",
     ),
     (
         "ST_DumpRings",
-        types.Geometry,
+        types.GeometryDump,
         "Returns a set of geometry_dump rows for the exterior and interior rings of a Polygon.",
     ),
     (
         "ST_DumpSegments",
-        types.Geometry,
+        types.GeometryDump,
         "A set-returning function (SRF) that extracts the segments of a geometry. It returns a set of geometry_dump rows, each containing a geometry (geom field) and an array of integers (path field).",
-    ),
-    (
-        "ST_DumpValues",
-        None,
-        "Get the values of the specified band as a 2-dimension array.",
     ),
     (
         "ST_EndPoint",
@@ -809,11 +705,6 @@ _FUNCTIONS = [
         "Returns the Fréchet distance between two geometries.",
     ),
     (
-        "ST_FromGDALRaster",
-        types.Geometry,
-        "Returns a raster from a supported GDAL raster file.",
-    ),
-    (
         "ST_GMLToSQL",
         types.Geometry,
         "Return a specified ST_Geometry value from GML representation. This is an alias name for ST_GeomFromGML",
@@ -829,23 +720,18 @@ _FUNCTIONS = [
         "Return a GeoHash representation of the geometry.",
     ),
     (
-        "ST_GeoReference",
-        None,
-        "Returns the georeference meta data in GDAL or ESRI format as commonly seen in a world file. Default is GDAL.",
-    ),
-    (
         "ST_GeogFromText",
-        types.Geometry,
+        types.Geography,
         "Return a specified geography value from Well-Known Text representation or extended (WKT).",
     ),
     (
         "ST_GeogFromWKB",
-        types.Geometry,
+        types.Geography,
         "Creates a geography instance from a Well-Known Binary geometry representation (WKB) or extended Well Known Binary (EWKB).",
     ),
     (
         "ST_GeographyFromText",
-        types.Geometry,
+        types.Geography,
         "Return a specified geography value from Well-Known Text representation or extended (WKT).",
     ),
     (
@@ -919,29 +805,14 @@ _FUNCTIONS = [
         "Returns the SQL-MM type of a geometry as text.",
     ),
     (
-        "ST_Grayscale",
-        types.Geometry,
-        "Creates a new one-8BUI band raster from the source raster and specified bands representing Red, Green and Blue",
-    ),
-    (
         "ST_HasArc",
         None,
         "Tests if a geometry contains a circular arc",
     ),
     (
-        "ST_HasNoBand",
-        None,
-        "Returns true if there is no band with given band number. If no band number is specified, then band number 1 is assumed.",
-    ),
-    (
         "ST_HausdorffDistance",
         None,
         "Returns the Hausdorff distance between two geometries.",
-    ),
-    (
-        "ST_Height",
-        None,
-        "Returns the height of the raster in pixels.",
     ),
     (
         "ST_Hexagon",
@@ -950,18 +821,8 @@ _FUNCTIONS = [
     ),
     (
         "ST_HexagonGrid",
-        types.Geometry,
+        types.GeometryDump,
         "Returns hexagons in a given Tiling(SRS, Size) that overlap with a given bounds.",
-    ),
-    (
-        "ST_HillShade",
-        types.Geometry,
-        "Returns the hypothetical illumination of an elevation raster band using provided azimuth, altitude, brightness and scale inputs.",
-    ),
-    (
-        "ST_Histogram",
-        None,
-        "Returns a set of record summarizing a raster or raster coverage data distribution separate bin ranges. Number of bins are autocomputed if not specified.",
     ),
     (
         "ST_InteriorRingN",
@@ -982,11 +843,6 @@ _FUNCTIONS = [
         "ST_Intersects",
         None,
         '[geometry] Returns TRUE if the Geometries/Geography "spatially intersect in 2D" - (share any portion of space) and FALSE if they don\'t (they are Disjoint). For geography tolerance is 0.00001 meters (so any points that close are considered to intersect)\nOR\n[raster] Return true if raster rastA spatially intersects raster rastB.',
-    ),
-    (
-        "ST_InvDistWeight4ma",
-        None,
-        "Raster processing function that interpolates a pixel's value from the pixel's neighborhood.",
     ),
     (
         "ST_IsClosed",
@@ -1179,16 +1035,6 @@ _FUNCTIONS = [
         "Creates a BOX2D defined by two 2D point geometries.",
     ),
     (
-        "ST_MakeEmptyCoverage",
-        types.Geometry,
-        "Cover georeferenced area with a grid of empty raster tiles.",
-    ),
-    (
-        "ST_MakeEmptyRaster",
-        types.Geometry,
-        "Returns an empty raster (having no bands) of given dimensions (width & height), upperleft X and Y, pixel size and rotation (scalex, scaley, skewx & skewy) and reference system (srid). If a raster is passed in, returns a new raster with the same size, alignment and SRID. If srid is left out, the spatial ref is set to unknown (0).",
-    ),
-    (
         "ST_MakeEnvelope",
         types.Geometry,
         "Creates a rectangular Polygon from minimum and maximum coordinates.",
@@ -1224,31 +1070,6 @@ _FUNCTIONS = [
         "Attempts to make an invalid geometry valid without losing vertices.",
     ),
     (
-        "ST_MapAlgebra",
-        None,
-        "[raster] Callback function version - Returns a one-band raster given one or more input rasters, band indexes and one user-specified callback function.\nOR\n[raster] Expression version - Returns a one-band raster given one or two input rasters, band indexes and one or more user-specified SQL expressions.",
-    ),
-    (
-        "ST_MapAlgebraExpr",
-        types.Geometry,
-        '[raster] 1 raster band version: Creates a new one band raster formed by applying a valid PostgreSQL algebraic operation on the input raster band and of pixeltype provided. Band 1 is assumed if no band is specified.\nOR\n[raster] 2 raster band version: Creates a new one band raster formed by applying a valid PostgreSQL algebraic operation on the two input raster bands and of pixeltype provided. band 1 of each raster is assumed if no band numbers are specified. The resulting raster will be aligned (scale, skew and pixel corners) on the grid defined by the first raster and have its extent defined by the "extenttype" parameter. Values for "extenttype" can be: INTERSECTION, UNION, FIRST, SECOND.',
-    ),
-    (
-        "ST_MapAlgebraFct",
-        types.Geometry,
-        "[raster] 1 band version - Creates a new one band raster formed by applying a valid PostgreSQL function on the input raster band and of pixeltype prodived. Band 1 is assumed if no band is specified.\nOR\n[raster] 2 band version - Creates a new one band raster formed by applying a valid PostgreSQL function on the 2 input raster bands and of pixeltype prodived. Band 1 is assumed if no band is specified. Extent type defaults to INTERSECTION if not specified.",
-    ),
-    (
-        "ST_MapAlgebraFctNgb",
-        types.Geometry,
-        "1-band version: Map Algebra Nearest Neighbor using user-defined PostgreSQL function. Return a raster which values are the result of a PLPGSQL user function involving a neighborhood of values from the input raster band.",
-    ),
-    (
-        "ST_Max4ma",
-        None,
-        "Raster processing function that calculates the maximum pixel value in a neighborhood.",
-    ),
-    (
         "ST_MaxDistance",
         None,
         "Returns the 2D largest distance between two geometries in projected units.",
@@ -1257,11 +1078,6 @@ _FUNCTIONS = [
         "ST_MaximumInscribedCircle",
         types.Geometry,
         "Finds the largest circle that is contained within a (multi)polygon, or which does not overlap any lines and points.",
-    ),
-    (
-        "ST_Mean4ma",
-        None,
-        "Raster processing function that calculates the mean pixel value in a neighborhood.",
     ),
     (
         "ST_MemSize",
@@ -1274,24 +1090,12 @@ _FUNCTIONS = [
         "Same as ST_Union, only memory-friendly (uses less memory and more processor time).",
     ),
     (
-        "ST_MetaData",
-        None,
-        "Returns basic meta data about a raster object such as pixel size, rotation (skew), upper, lower left, etc.",
-    ),
-    (
-        "ST_Min4ma",
-        None,
-        "Raster processing function that calculates the minimum pixel value in a neighborhood.",
-    ),
-    (
         "ST_MinConvexHull",
         types.Geometry,
-        "Return the convex hull geometry of the raster excluding NODATA pixels.",
-    ),
-    (
-        "ST_MinDist4ma",
-        None,
-        "Raster processing function that returns the minimum distance (in number of pixels) between the pixel of interest and a neighboring pixel with value.",
+        (
+            "Return the convex hull geometry of the raster excluding NODATA pixels.",
+            "RT_ST_MinConvexHull",
+        ),
     ),
     (
         "ST_MinPossibleValue",
@@ -1344,16 +1148,6 @@ _FUNCTIONS = [
         "Returns the number of rings in a polygonal geometry.",
     ),
     (
-        "ST_NearestValue",
-        None,
-        "Returns the nearest non-NODATA value of a given band's pixel specified by a columnx and rowy or a geometric point expressed in the same spatial reference coordinate system as the raster.",
-    ),
-    (
-        "ST_Neighborhood",
-        None,
-        "Returns a 2-D double precision array of the non-NODATA values around a given band's pixel specified by either a columnX and rowY or a geometric point expressed in the same spatial reference coordinate system as the raster.",
-    ),
-    (
         "ST_Node",
         types.Geometry,
         "Node a set of linestrings.",
@@ -1362,16 +1156,6 @@ _FUNCTIONS = [
         "ST_Normalize",
         types.Geometry,
         "Return the geometry in its canonical form.",
-    ),
-    (
-        "ST_NotSameAlignmentReason",
-        None,
-        "Returns text stating if rasters are aligned and if not aligned, a reason why.",
-    ),
-    (
-        "ST_NumBands",
-        None,
-        "Returns the number of bands in the raster object.",
     ),
     (
         "ST_NumGeometries",
@@ -1446,47 +1230,26 @@ _FUNCTIONS = [
     (
         "ST_PixelAsCentroid",
         types.Geometry,
-        "Returns the centroid (point geometry) of the area represented by a pixel.",
-    ),
-    (
-        "ST_PixelAsCentroids",
-        None,
-        "Returns the centroid (point geometry) for each pixel of a raster band along with the value, the X and the Y raster coordinates of each pixel. The point geometry is the centroid of the area represented by a pixel.",
+        (
+            "Returns the centroid (point geometry) of the area represented by a pixel.",
+            "RT_ST_PixelAsCentroid",
+        ),
     ),
     (
         "ST_PixelAsPoint",
         types.Geometry,
-        "Returns a point geometry of the pixel's upper-left corner.",
-    ),
-    (
-        "ST_PixelAsPoints",
-        None,
-        "Returns a point geometry for each pixel of a raster band along with the value, the X and the Y raster coordinates of each pixel. The coordinates of the point geometry are of the pixel's upper-left corner.",
+        (
+            "Returns a point geometry of the pixel's upper-left corner.",
+            "RT_ST_PixelAsPoint",
+        ),
     ),
     (
         "ST_PixelAsPolygon",
         types.Geometry,
-        "Returns the polygon geometry that bounds the pixel for a particular row and column.",
-    ),
-    (
-        "ST_PixelAsPolygons",
-        None,
-        "Returns the polygon geometry that bounds every pixel of a raster band along with the value, the X and the Y raster coordinates of each pixel.",
-    ),
-    (
-        "ST_PixelHeight",
-        None,
-        "Returns the pixel height in geometric units of the spatial reference system.",
-    ),
-    (
-        "ST_PixelOfValue",
-        None,
-        "Get the columnx, rowy coordinates of the pixel whose value equals the search value.",
-    ),
-    (
-        "ST_PixelWidth",
-        None,
-        "Returns the pixel width in geometric units of the spatial reference system.",
+        (
+            "Returns the polygon geometry that bounds the pixel for a particular row and column.",
+            "RT_ST_PixelAsPolygon",
+        ),
     ),
     (
         "ST_Point",
@@ -1555,53 +1318,13 @@ _FUNCTIONS = [
     ),
     (
         "ST_Project",
-        types.Geometry,
+        types.Geography,
         "Returns a point projected from a start point by a distance and bearing (azimuth).",
-    ),
-    (
-        "ST_Quantile",
-        None,
-        "Compute quantiles for a raster or raster table coverage in the context of the sample or population. Thus, a value could be examined to be at the raster's 25%, 50%, 75% percentile.",
     ),
     (
         "ST_QuantizeCoordinates",
         types.Geometry,
         "Sets least significant bits of coordinates to zero",
-    ),
-    (
-        "ST_Range4ma",
-        None,
-        "Raster processing function that calculates the range of pixel values in a neighborhood.",
-    ),
-    (
-        "ST_RastFromHexWKB",
-        types.Geometry,
-        "Return a raster value from a Hex representation of Well-Known Binary (WKB) raster.",
-    ),
-    (
-        "ST_RastFromWKB",
-        types.Geometry,
-        "Return a raster value from a Well-Known Binary (WKB) raster.",
-    ),
-    (
-        "ST_RasterToWorldCoord",
-        None,
-        "Returns the raster's upper left corner as geometric X and Y (longitude and latitude) given a column and row. Column and row starts at 1.",
-    ),
-    (
-        "ST_RasterToWorldCoordX",
-        None,
-        "Returns the geometric X coordinate upper left of a raster, column and row. Numbering of columns and rows starts at 1.",
-    ),
-    (
-        "ST_RasterToWorldCoordY",
-        None,
-        "Returns the geometric Y coordinate upper left corner of a raster, column and row. Numbering of columns and rows starts at 1.",
-    ),
-    (
-        "ST_Reclass",
-        types.Geometry,
-        "Creates a new raster composed of band types reclassified from original. The nband is the band to be changed. If nband is not specified assumed to be 1. All other bands are returned unchanged. Use case: convert a 16BUI band to a 8BUI and so forth for simpler rendering as viewable formats.",
     ),
     (
         "ST_ReducePrecision",
@@ -1629,31 +1352,6 @@ _FUNCTIONS = [
         "Returns a version of the given geometry with duplicated points removed.",
     ),
     (
-        "ST_Resample",
-        types.Geometry,
-        "Resample a raster using a specified resampling algorithm, new dimensions, an arbitrary grid corner and a set of raster georeferencing attributes defined or borrowed from another raster.",
-    ),
-    (
-        "ST_Rescale",
-        types.Geometry,
-        "Resample a raster by adjusting only its scale (or pixel size). New pixel values are computed using the NearestNeighbor (english or american spelling), Bilinear, Cubic, CubicSpline or Lanczos resampling algorithm. Default is NearestNeighbor.",
-    ),
-    (
-        "ST_Resize",
-        types.Geometry,
-        "Resize a raster to a new width/height",
-    ),
-    (
-        "ST_Reskew",
-        types.Geometry,
-        "Resample a raster by adjusting only its skew (or rotation parameters). New pixel values are computed using the NearestNeighbor (english or american spelling), Bilinear, Cubic, CubicSpline or Lanczos resampling algorithm. Default is NearestNeighbor.",
-    ),
-    (
-        "ST_Retile",
-        types.Geometry,
-        "Return a set of configured tiles from an arbitrarily tiled raster coverage.",
-    ),
-    (
         "ST_Reverse",
         types.Geometry,
         "Return the geometry with vertex order reversed.",
@@ -1679,39 +1377,14 @@ _FUNCTIONS = [
         "Rotates a geometry about the Z axis.",
     ),
     (
-        "ST_Rotation",
-        None,
-        "Returns the rotation of the raster in radian.",
-    ),
-    (
-        "ST_Roughness",
-        types.Geometry,
-        'Returns a raster with the calculated "roughness" of a DEM.',
-    ),
-    (
         "ST_SRID",
         None,
         "[geometry] Returns the spatial reference identifier for the ST_Geometry as defined in spatial_ref_sys table.\nOR\n[raster] Returns the spatial reference identifier of the raster as defined in spatial_ref_sys table.",
     ),
     (
-        "ST_SameAlignment",
-        None,
-        "Returns true if rasters have same skew, scale, spatial ref, and offset (pixels can be put on same grid without cutting into pixels) and false if they don't with notice detailing issue.",
-    ),
-    (
         "ST_Scale",
         types.Geometry,
         "Scales a geometry by given factors.",
-    ),
-    (
-        "ST_ScaleX",
-        None,
-        "Returns the X component of the pixel width in units of coordinate reference system.",
-    ),
-    (
-        "ST_ScaleY",
-        None,
-        "Returns the Y component of the pixel height in units of coordinate reference system.",
     ),
     (
         "ST_Scroll",
@@ -1724,34 +1397,9 @@ _FUNCTIONS = [
         "Return a modified geometry/geography having no segment longer than the given distance.",
     ),
     (
-        "ST_SetBandIndex",
-        types.Geometry,
-        "Update the external band number of an out-db band",
-    ),
-    (
-        "ST_SetBandIsNoData",
-        types.Geometry,
-        "Sets the isnodata flag of the band to TRUE.",
-    ),
-    (
-        "ST_SetBandNoDataValue",
-        types.Geometry,
-        "Sets the value for the given band that represents no data. Band 1 is assumed if no band is specified. To mark a band as having no nodata value, set the nodata value = NULL.",
-    ),
-    (
-        "ST_SetBandPath",
-        types.Geometry,
-        "Update the external path and band number of an out-db band",
-    ),
-    (
         "ST_SetEffectiveArea",
         types.Geometry,
         "Sets the effective area for each vertex, storing the value in the M ordinate. A simplified geometry can then be generated by filtering on the M ordinate.",
-    ),
-    (
-        "ST_SetGeoReference",
-        types.Geometry,
-        "Set Georeference 6 georeference parameters in a single call. Numbers should be separated by white space. Accepts inputs in GDAL or ESRI format. Default is GDAL.",
     ),
     (
         "ST_SetPoint",
@@ -1759,39 +1407,9 @@ _FUNCTIONS = [
         "Replace point of a linestring with a given point.",
     ),
     (
-        "ST_SetRotation",
-        types.Geometry,
-        "Set the rotation of the raster in radian.",
-    ),
-    (
         "ST_SetSRID",
         types.Geometry,
         "[geometry] Set the SRID on a geometry to a particular integer value.\nOR\n[raster] Sets the SRID of a raster to a particular integer srid defined in the spatial_ref_sys table.",
-    ),
-    (
-        "ST_SetScale",
-        types.Geometry,
-        "Sets the X and Y size of pixels in units of coordinate reference system. Number units/pixel width/height.",
-    ),
-    (
-        "ST_SetSkew",
-        types.Geometry,
-        "Sets the georeference X and Y skew (or rotation parameter). If only one is passed in, sets X and Y to the same value.",
-    ),
-    (
-        "ST_SetUpperLeft",
-        types.Geometry,
-        "Sets the value of the upper left corner of the pixel of the raster to projected X and Y coordinates.",
-    ),
-    (
-        "ST_SetValue",
-        types.Geometry,
-        "Returns modified raster resulting from setting the value of a given band in a given columnx, rowy pixel or the pixels that intersect a particular geometry. Band numbers start at 1 and assumed to be 1 if not specified.",
-    ),
-    (
-        "ST_SetValues",
-        types.Geometry,
-        "Returns modified raster resulting from setting the values of a given band.",
     ),
     (
         "ST_SharedPaths",
@@ -1829,21 +1447,6 @@ _FUNCTIONS = [
         'Returns a "simplified" version of the given geometry using the Visvalingam-Whyatt algorithm',
     ),
     (
-        "ST_SkewX",
-        None,
-        "Returns the georeference X skew (or rotation parameter).",
-    ),
-    (
-        "ST_SkewY",
-        None,
-        "Returns the georeference Y skew (or rotation parameter).",
-    ),
-    (
-        "ST_Slope",
-        types.Geometry,
-        "Returns the slope (in degrees by default) of an elevation raster band. Useful for analyzing terrain.",
-    ),
-    (
         "ST_Snap",
         types.Geometry,
         "Snap segments and vertices of input geometry to vertices of a reference geometry.",
@@ -1865,18 +1468,13 @@ _FUNCTIONS = [
     ),
     (
         "ST_SquareGrid",
-        types.Geometry,
+        types.GeometryDump,
         "Starts with the concept of a square tiling of the plane. For a given planar SRS, and a given edge size, starting at the origin of the SRS, there is one unique square tiling of the plane, Tiling(SRS, Size). This function answers the question: what grids in a given Tiling(SRS, Size) overlap with a given bounds.",
     ),
     (
         "ST_StartPoint",
         types.Geometry,
         "Returns the first point of a LineString.",
-    ),
-    (
-        "ST_StdDev4ma",
-        None,
-        "Raster processing function that calculates the standard deviation of pixel values in a neighborhood.",
     ),
     (
         "ST_StraightSkeleton",
@@ -1889,24 +1487,17 @@ _FUNCTIONS = [
         "Returns a set of geometry where no geometry in the set has more than the specified number of vertices.",
     ),
     (
-        "ST_Sum4ma",
-        None,
-        "Raster processing function that calculates the sum of all pixel values in a neighborhood.",
-    ),
-    (
         "ST_Summary",
         None,
         "[geometry] Returns a text summary of the contents of a geometry.\nOR\n[raster] Returns a text summary of the contents of the raster.",
     ),
     (
-        "ST_SummaryStats",
-        None,
-        "Returns summarystats consisting of count, sum, mean, stddev, min, max for a given raster band of a raster or raster coverage. Band 1 is assumed is no band is specified.",
-    ),
-    (
         "ST_SummaryStatsAgg",
-        types.Geometry,
-        "Aggregate. Returns summarystats consisting of count, sum, mean, stddev, min, max for a given raster band of a set of raster. Band 1 is assumed is no band is specified.",
+        types.SummaryStats,
+        (
+            "Aggregate. Returns summarystats consisting of count, sum, mean, stddev, min, max for a given raster band of a set of raster. Band 1 is assumed is no band is specified.",
+            "RT_ST_SummaryStatsAgg",
+        ),
     ),
     (
         "ST_SwapOrdinates",
@@ -1919,24 +1510,9 @@ _FUNCTIONS = [
         "Returns a geometry that represents the portions of A and B that do not intersect. It is called a symmetric difference because ST_SymDifference(A,B) = ST_SymDifference(B,A).",
     ),
     (
-        "ST_TPI",
-        types.Geometry,
-        "Returns a raster with the calculated Topographic Position Index.",
-    ),
-    (
-        "ST_TRI",
-        types.Geometry,
-        "Returns a raster with the calculated Terrain Ruggedness Index.",
-    ),
-    (
         "ST_Tesselate",
         types.Geometry,
         "Perform surface Tessellation of a polygon or polyhedralsurface and returns as a TIN or collection of TINS",
-    ),
-    (
-        "ST_Tile",
-        types.Geometry,
-        "Returns a set of rasters resulting from the split of the input raster based upon the desired dimensions of the output rasters.",
     ),
     (
         "ST_TileEnvelope",
@@ -1979,26 +1555,6 @@ _FUNCTIONS = [
         "[geometry] Returns a geometry that represents the point set union of the Geometries.\nOR\n[raster] Returns the union of a set of raster tiles into a single raster composed of 1 or more bands.",
     ),
     (
-        "ST_UpperLeftX",
-        None,
-        "Returns the upper left X coordinate of raster in projected spatial ref.",
-    ),
-    (
-        "ST_UpperLeftY",
-        None,
-        "Returns the upper left Y coordinate of raster in projected spatial ref.",
-    ),
-    (
-        "ST_Value",
-        None,
-        "Returns the value of a given band in a given columnx, rowy pixel or at a particular geometric point. Band numbers start at 1 and assumed to be 1 if not specified. If exclude_nodata_value is set to false, then all pixels include nodata pixels are considered to intersect and return value. If exclude_nodata_value is not passed in then reads it from metadata of raster.",
-    ),
-    (
-        "ST_ValueCount",
-        None,
-        "Returns a set of records containing a pixel band value and count of the number of pixels in a given band of a raster (or a raster coverage) that have a given set of values. If no band is specified defaults to band 1. By default nodata value pixels are not counted. and all other values in the pixel are output and pixel band values are rounded to the nearest integer.",
-    ),
-    (
         "ST_Volume",
         None,
         "Computes the volume of a 3D solid. If applied to surface (even closed) geometries will return 0.",
@@ -2024,29 +1580,25 @@ _FUNCTIONS = [
         "Return a specified ST_Geometry value from Well-Known Text representation (WKT). This is an alias name for ST_GeomFromText",
     ),
     (
-        "ST_Width",
-        None,
-        "Returns the width of the raster in pixels.",
-    ),
-    (
         "ST_Within",
         None,
         "[geometry] Returns true if the geometry A is completely inside geometry B\nOR\n[raster] Return true if no points of raster rastA lie in the exterior of raster rastB and at least one point of the interior of rastA lies in the interior of rastB.",
     ),
     (
-        "ST_WorldToRasterCoord",
-        None,
-        "Returns the upper left corner as column and row given geometric X and Y (longitude and latitude) or a point geometry expressed in the spatial reference coordinate system of the raster.",
-    ),
-    (
         "ST_WorldToRasterCoordX",
         None,
-        "Returns the column in the raster of the point geometry (pt) or a X and Y world coordinate (xw, yw) represented in world spatial reference system of raster.",
+        (
+            "Returns the column in the raster of the point geometry (pt) or a X and Y world coordinate (xw, yw) represented in world spatial reference system of raster.",
+            "RT_ST_WorldToRasterCoordX",
+        ),
     ),
     (
         "ST_WorldToRasterCoordY",
         None,
-        "Returns the row in the raster of the point geometry (pt) or a X and Y world coordinate (xw, yw) represented in world spatial reference system of raster.",
+        (
+            "Returns the row in the raster of the point geometry (pt) or a X and Y world coordinate (xw, yw) represented in world spatial reference system of raster.",
+            "RT_ST_WorldToRasterCoordY",
+        ),
     ),
     (
         "ST_WrapX",
