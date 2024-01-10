@@ -31,7 +31,7 @@ class Raster(_GISType):
     """ The "from text" raster constructor. Used by the parent class'
         ``bind_expression`` method. """
 
-    as_binary = "raster"
+    as_binary = "st_asbinary"
     """ The "as binary" function to use. Used by the parent class'
         ``column_expression`` method. """
 

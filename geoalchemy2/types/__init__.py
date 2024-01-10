@@ -14,6 +14,7 @@ from geoalchemy2.types.composite_type import CompositeType
 from geoalchemy2.types.dialects import select_dialect
 from geoalchemy2.types.dummy_geometry import _DummyGeometry
 from geoalchemy2.types.geography import Geography
+from geoalchemy2.types.geom_val import GeomVal
 from geoalchemy2.types.geometry import Geometry
 from geoalchemy2.types.geometry_dump import GeometryDump
 from geoalchemy2.types.gis_type import _GISType
@@ -59,6 +60,7 @@ __all__ = [
     "Geography",
     "Geometry",
     "GeometryDump",
+    "GeomVal",
     "Raster",
     "SummaryStats",
     "dialects",

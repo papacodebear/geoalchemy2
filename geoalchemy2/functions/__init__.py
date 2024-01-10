@@ -67,6 +67,7 @@ Reference
 
 """
 import re
+from typing import Union
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.compiler import compiles
@@ -76,9 +77,6 @@ from sqlalchemy.sql.elements import ColumnElement
 
 from geoalchemy2 import elements
 from geoalchemy2._functions import _FUNCTIONS
-from geoalchemy2.functions._geography import _FUNCTIONS as _GEOGRAPHY_FUNCTIONS  # noqa: F401
-from geoalchemy2.functions._geometry import _FUNCTIONS as _GEOMETRY_FUNCTIONS  # noqa: F401
-from geoalchemy2.functions._raster import _FUNCTIONS as _RASTER_FUNCTIONS  # noqa: F401
 
 try:
     # SQLAlchemy < 2
@@ -252,6 +250,8 @@ class GenericFunction(_GeoFunctionBase):
                     func_name = elem.geom_from
                     func_args = [elem.data, elem.srid]
                 args[idx] = getattr(functions.func, func_name)(*func_args)
+        func_entry = _FUNCTIONS[self.name]
+        self.type = func_entry[tuple([type(_.type) for _ in args])]["inst"]
         _GeoFunctionParent.__init__(self, *args, **kwargs)
 
 
@@ -264,28 +264,22 @@ __all__ = [
 
 # Iterate through _FUNCTIONS and create GenericFunction classes dynamically.
 # TODO: Change this so that it picks the right functions per type.
-for name, type_, doc in _FUNCTIONS:
-    attributes = {
-        "name": name,
-        "inherit_cache": True,
-    }
+for name, func_entries in _FUNCTIONS.items():
     docs = []
+    type_hints = []
 
-    if isinstance(doc, tuple):
-        docs.append(doc[0])
-        docs.append("see http://postgis.net/docs/{0}.html".format(doc[1]))
-    elif doc is not None:
-        docs.append(doc)
-        docs.append("see http://postgis.net/docs/{0}.html".format(name))
+    for entry in func_entries:
+        func = func_entries[entry]
+        docs.append(func["description"])
+        type_hints.append(func.get("type_hint", None))
 
-    if type_ is not None:
-        attributes["type"] = type_
+    docs.append(func_entries[list(func_entries.keys())[0]]["doc_url"])
+    # NOTE: type(Union[one type]) == type(one type), which allows us to just Union one or more
+    # types together.
+    type_ = Union[*type_hints]
+    docs.append("Return type: :class:`{0}`.".format(type_))
 
-        type_str = "{0}.{1}".format(type_.__module__, type_.__name__)
-        docs.append("Return type: :class:`{0}`.".format(type_str))
-
-    if len(docs) != 0:
-        attributes["__doc__"] = "\n\n".join(docs)
+    attributes = {"name": name, "inherit_cache": True, "__doc__": "\n\n".join(docs), "type": type_}
 
     globals()[name] = type(name, (GenericFunction,), attributes)
     __all__.append(name)

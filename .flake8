@@ -4,3 +4,5 @@ ignore=
 	E203
 	W503
 	W504
+
+per-file-ignores = geoalchemy2/_functions.py:E501
