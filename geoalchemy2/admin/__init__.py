@@ -6,7 +6,6 @@ from sqlalchemy import event
 from sqlalchemy.sql import func
 
 from geoalchemy2.admin import dialects
-from geoalchemy2.admin.dialects import select_dialect
 from geoalchemy2.admin.dialects.common import _check_spatial_type
 from geoalchemy2.admin.dialects.common import _spatial_idx_name
 from geoalchemy2.exc import ArgumentError
@@ -15,7 +14,20 @@ from geoalchemy2.types import Geometry
 from geoalchemy2.types import Raster
 
 
+def select_dialect(dialect_name):
+    """Select the dialect from its name."""
+    known_dialects = {
+        "geopackage": dialects.geopackage,
+        "mysql": dialects.mysql,
+        "postgresql": dialects.postgresql,
+        "sqlite": dialects.sqlite,
+    }
+    return known_dialects.get(dialect_name, dialects.common)
+
+
 def setup_ddl_event_listeners():
+    """Setup the DDL event listeners to automatically process spatial columns."""
+
     @event.listens_for(Table, "before_create")
     def before_create(table, bind, **kw):
         """Handle spatial indexes."""
@@ -54,9 +66,7 @@ def setup_ddl_event_listeners():
         ):
             raise ArgumentError("Arg Error(use_N_D_index): spatial_index must be True")
 
-        if getattr(column.type, "management", True) or not getattr(
-            column.type, "spatial_index", False
-        ):
+        if not getattr(column.type, "spatial_index", False):
             # If the column is managed, the indexes are created after the table
             return
 

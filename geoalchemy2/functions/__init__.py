@@ -67,6 +67,8 @@ Reference
 
 """
 import re
+from typing import List
+from typing import Type
 from typing import Union
 
 from sqlalchemy import inspect
@@ -78,11 +80,13 @@ from sqlalchemy.sql.elements import ColumnElement
 from geoalchemy2 import elements
 from geoalchemy2._functions import _FUNCTIONS
 
+_GeoFunctionBase: Type[functions.GenericFunction]
+_GeoFunctionParent: Type[functions.GenericFunction]
 try:
     # SQLAlchemy < 2
 
-    from sqlalchemy.sql.functions import _GenericMeta
-    from sqlalchemy.util import with_metaclass
+    from sqlalchemy.sql.functions import _GenericMeta  # type: ignore
+    from sqlalchemy.util import with_metaclass  # type: ignore
 
     class _GeoGenericMeta(_GenericMeta):
         """Extend the registering mechanism of sqlalchemy.
@@ -92,7 +96,7 @@ try:
 
         _register = False
 
-        def __init__(cls, clsname, bases, clsdict):
+        def __init__(cls, clsname, bases, clsdict) -> None:
             # Register the function
             elements.function_registry.add(clsname.lower())
 
@@ -110,7 +114,7 @@ except ImportError:
             super().__init_subclass__()
 
         @classmethod
-        def _register_geo_function(cls, clsname, clsdict):
+        def _register_geo_function(cls, clsname, clsdict) -> None:
             # Check _register attribute status
             cls._register = getattr(cls, "_register", True)
 
@@ -126,52 +130,52 @@ except ImportError:
 
 
 class TableRowElement(ColumnElement):
-    inherit_cache = False
+    inherit_cache: bool = False
     """The cache is disabled for this class."""
 
-    def __init__(self, selectable):
+    def __init__(self, selectable: bool) -> None:
         self.selectable = selectable
 
     @property
-    def _from_objects(self):
+    def _from_objects(self) -> List[bool]:
         return [self.selectable]
 
 
-class ST_AsGeoJSON(_GeoFunctionBase):
+class ST_AsGeoJSON(_GeoFunctionBase):  # type: ignore
     """Special process for the ST_AsGeoJSON() function.
 
     This is to be able to work with its feature version introduced in PostGIS 3.
     """
 
-    name = "ST_AsGeoJSON"
-    inherit_cache = True
+    name: str = "ST_AsGeoJSON"
+    inherit_cache: bool = True
     """The cache is enabled for this class."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         expr = kwargs.pop("expr", None)
-        args = list(args)
+        args_list = list(args)
         if expr is not None:
-            args = [expr] + args
-        for idx, element in enumerate(args):
+            args_list = [expr] + args_list
+        for idx, element in enumerate(args_list):
             if isinstance(element, functions.Function):
                 continue
-            elif isinstance(element, elements.HasFunction):
+            elif isinstance(element, elements._SpatialElement):
                 if element.extended:
                     func_name = element.geom_from_extended_version
                     func_args = [element.data]
                 else:
                     func_name = element.geom_from
                     func_args = [element.data, element.srid]
-                args[idx] = getattr(functions.func, func_name)(*func_args)
+                args_list[idx] = getattr(functions.func, func_name)(*func_args)
             else:
                 try:
                     insp = inspect(element)
                     if hasattr(insp, "selectable"):
-                        args[idx] = TableRowElement(insp.selectable)
+                        args_list[idx] = TableRowElement(insp.selectable)
                 except Exception:
                     continue
 
-        _GeoFunctionParent.__init__(self, *args, **kwargs)
+        _GeoFunctionParent.__init__(self, *args_list, **kwargs)
 
     __doc__ = (
         'Return the geometry as a GeoJSON "geometry" object, or the row as a '
@@ -205,7 +209,7 @@ def _compile_table_row_thing(element, compiler, **kw):
     return compiled.split(".")[0]
 
 
-class GenericFunction(_GeoFunctionBase):
+class GenericFunction(_GeoFunctionBase):  # type: ignore
     """The base class for GeoAlchemy functions.
 
     This class inherits from ``sqlalchemy.sql.functions.GenericFunction``, so
@@ -236,13 +240,13 @@ class GenericFunction(_GeoFunctionBase):
     # sqlalchemy.sql.functions._registry. Only its children will be registered.
     _register = False
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         expr = kwargs.pop("expr", None)
-        args = list(args)
+        args_list = list(args)
         if expr is not None:
-            args = [expr] + args
-        for idx, elem in enumerate(args):
-            if isinstance(elem, elements.HasFunction):
+            args_list = [expr] + args_list
+        for idx, elem in enumerate(args_list):
+            if isinstance(elem, elements._SpatialElement):
                 if elem.extended:
                     func_name = elem.geom_from_extended_version
                     func_args = [elem.data]
@@ -262,28 +266,36 @@ __all__ = [
 ]
 
 
-# Iterate through _FUNCTIONS and create GenericFunction classes dynamically.
-# TODO: Change this so that it picks the right functions per type.
-for name, func_entries in _FUNCTIONS.items():
-    docs = []
-    type_hints = []
+def _create_dynamic_functions() -> None:
+    # Iterate through _FUNCTIONS and create GenericFunction classes dynamically.
+    for name, func_entries in _FUNCTIONS.items():
+        docs = []
+        type_hints = []
 
-    for entry in func_entries:
-        func = func_entries[entry]
-        docs.append(func["description"])
-        type_hints.append(func.get("type_hint", None))
+        for entry in func_entries:
+            func = func_entries[entry]
+            docs.append(func["description"])
+            type_hints.append(func.get("type_hint", None))
 
-    docs.append(func_entries[list(func_entries.keys())[0]]["doc_url"])
-    # NOTE: type(Union[one type]) == type(one type), which allows us to just Union one or more
-    # types together.
-    type_ = Union[*type_hints]
-    docs.append("Return type: :class:`{0}`.".format(type_))
+        docs.append(func_entries[list(func_entries.keys())[0]]["doc_url"])
+        # NOTE: type(Union[one type]) == type(one type), which allows us to just Union one or more
+        # types together.
+        type_ = Union[*type_hints]
+        docs.append("Return type: :class:`{0}`.".format(type_))
 
-    attributes = {"name": name, "inherit_cache": True, "__doc__": "\n\n".join(docs), "type": type_}
+        attributes = {
+            "name": name,
+            "inherit_cache": True,
+            "__doc__": "\n\n".join(docs),
+            "type": type_,
+        }
 
-    globals()[name] = type(name, (GenericFunction,), attributes)
-    __all__.append(name)
+        globals()[name] = type(name, (GenericFunction,), attributes)
+        __all__.append(name)
 
 
-def __dir__():
+_create_dynamic_functions()
+
+
+def __dir__() -> List[str]:
     return __all__

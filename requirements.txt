@@ -1,11 +1,12 @@
 # Additional requirements for running the testsuite and development
-alembic<1.11
+alembic
 flake8
 mysql
 pre-commit
 pytest
 pytest-cov
 pytest-html
+pytest-mypy
 rasterio
 ipykernel
 psycopg2

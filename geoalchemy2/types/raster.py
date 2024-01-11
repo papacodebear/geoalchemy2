@@ -42,7 +42,7 @@ class Raster(_GISType):
     cache_ok = False
     """ Disable cache for this type. """
 
-    def __init__(self, spatial_index=True, from_text=None, name=None, nullable=True):
+    def __init__(self, spatial_index=True, from_text=None, name=None, nullable=True) -> None:
         # Enforce default values
         super(Raster, self).__init__(
             geometry_type=None,
@@ -50,7 +50,6 @@ class Raster(_GISType):
             dimension=2,
             spatial_index=spatial_index,
             use_N_D_index=False,
-            management=False,
             use_typmod=False,
             from_text=from_text,
             name=name,
